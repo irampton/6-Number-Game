@@ -31,7 +31,10 @@
 let output = [null,null,null,null,null,null];
 let testResults;
 function go() {
-    output = [null,null,null,null,null,null];
+    output = [null, null, null, null, null, null];
+    if (countLists.length === 0) {
+        createCountLists();
+    }
     for(let i = 6; i > 0;i--){
         runTheNumbers(i);
     }
@@ -89,19 +92,30 @@ function findPosition(spaces, y) {
 
 function count(x) {
     x--;
-    let list = [];
-    for (let i = 0; i < 10; i++) {
-        if (x > 0) {
-            let l2 = count(x);
-            for (let j = 0; j < l2.length; j++){
-                l2[j].push(i);
+    if (countLists[x]) {
+        return countLists[x];
+    } else {
+        let list = [];
+        for (let i = 0; i < 10; i++) {
+            if (x > 0) {
+                let l2 = count(x);
+                for (let j = 0; j < l2.length; j++) {
+                    l2[j].push(i);
+                }
+                list.push(...l2);
+            } else {
+                list.push([i]);
             }
-            list.push(...l2);
-        } else {
-            list.push([i]);
         }
+        return list;
     }
-    return list;
+}
+
+let countLists = [];
+function createCountLists() {
+    for (let i = 0; i < 6; i++){
+        countLists.push(count(i));
+    }
 }
 
 function updateOutput() {
