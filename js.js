@@ -29,60 +29,63 @@
     console.log(prob);
 }*/
 //Global Vars
-let output = [null,null,null,null,null,null];
+let output = [null, null, null, null, null, null];
 let testResults;
 let f = false;
 
 //User interaction functions
-function step(){
-	let guess = Array.of(...output);
-	let locked = [];
-    for(let i = 0;i < guess.length;i++){
-        if(guess[i] !== null){
+function step() {
+    let guess = Array.of(...output);
+    let locked = [];
+    for (let i = 0; i < guess.length; i++) {
+        if (guess[i] !== null) {
             locked.push(i);
         }
     }
-	if(document.getElementById("i" + (locked.length)).value !== ""){
-		runTheNumbers(6-locked.length);
-	}
+    if (document.getElementById("i" + (locked.length)).value !== "") {
+        runTheNumbers(6 - locked.length);
+    }
 }
-function clearInput(){
-	for(let i = 0; i < 6;i++){
+
+function clearInput() {
+    for (let i = 0; i < 6; i++) {
         document.getElementById("i" + i).value = "";
     }
 }
-function clearOutput(){
-	output = [null,null,null,null,null,null];
-	updateOutput();
+
+function clearOutput() {
+    output = [null, null, null, null, null, null];
+    updateOutput();
 }
+
 function go() {
     output = [null, null, null, null, null, null];
     if (countLists.length === 0) {
         createCountLists();
 
     }
-    for(let i = 6; i > 0;i--){
+    for (let i = 6; i > 0; i--) {
         runTheNumbers(i);
     }
 }
-function randAndGo(){
-	clearOutput();
-	randomize();
-	go();
-}
-function clearAll(){
-	clearInput();
-	clearOutput();
+
+function randAndGo() {
+    clearOutput();
+    randomize();
+    go();
 }
 
-
+function clearAll() {
+    clearInput();
+    clearOutput();
+}
 
 
 function runTheNumbers(spaces) {
     let y = Number(document.getElementById("i" + (6 - spaces)).value);
-    let prob = findPosition(spaces,y);
+    let prob = findPosition(spaces, y);
     //console.log(prob);
-    output[prob.reduce((acc,cur,ind) => [cur < acc[0] ? cur : acc[0], cur < acc[0] ? ind : acc[1] ], [1001, -1])[1]] = y;
+    output[prob.reduce((acc, cur, ind) => [cur < acc[0] ? cur : acc[0], cur < acc[0] ? ind : acc[1]], [1001, -1])[1]] = y;
     updateOutput();
     //console.log(output);
 }
@@ -91,15 +94,15 @@ function findPosition(spaces, y) {
     let guess = Array.of(...output);
     let prob = [];
     let locked = [];
-    for(let i = 0;i < guess.length;i++){
-        if(guess[i] !== null){
+    for (let i = 0; i < guess.length; i++) {
+        if (guess[i] !== null) {
             locked.push(i);
         }
     }
     //console.log(locked);
     for (let i = 0; i < 6; i++) {
         let doNotTouch = Array.of(...locked);
-        if(locked.includes(i)){
+        if (locked.includes(i)) {
             prob.push(1001);
             continue;
         }
@@ -109,10 +112,10 @@ function findPosition(spaces, y) {
         guess[i] = y;
         //do stuff
         let it = count(spaces - 1);
-        for(let j = 0;j < it.length;j++){
+        for (let j = 0; j < it.length; j++) {
             let index = 0;
-            for(let k = 0;k < it[j].length;k++){
-                if(doNotTouch.includes(index)){
+            for (let k = 0; k < it[j].length; k++) {
+                if (doNotTouch.includes(index)) {
                     index++;
                 }
                 guess[index] = it[j][k];
@@ -127,15 +130,14 @@ function findPosition(spaces, y) {
         //prob.push(statList.reduce((a, b) => a + b, 0) / statList.length);
         prob.push(ss.quantile(statList, 0.75));
     }
-	//console.log(prob);
+    //console.log(prob);
     return prob;
 }
 
 function count(x) {
     x--;
-    if (countLists[x]) {
+    if (countLists[x] !== undefined) {
         return countLists[x];
-
     } else {
         let list = [];
         for (let i = 0; i < 10; i++) {
@@ -154,37 +156,38 @@ function count(x) {
 }
 
 let countLists = [];
+
 function createCountLists() {
-    for (let i = 0; i < 6; i++){
-
-        countLists.push(count(i));
-
+    let templist = [];
+    for (let i = 0; i < 6; i++) {
+        templist.push(count(i));
     }
-
+    countLists = templist;
 }
 
 function updateOutput() {
     let print = [];
-	let flag = false;
-    for(let i =0;i<output.length;i++){
-        if(output[i] === null){
+    let flag = false;
+    for (let i = 0; i < output.length; i++) {
+        if (output[i] === null) {
             print[i] = "_";
-			flag = true;
-        }else{
+            flag = true;
+        } else {
             print[i] = output[i];
         }
     }
-	let result = "";
-	if(!flag){
-		let y = (output[0] * 100) + (output[1] * 10) + output[2];
+    let result = "";
+    if (!flag) {
+        let y = (output[0] * 100) + (output[1] * 10) + output[2];
         let z = (output[3] * 100) + (output[4] * 10) + output[5];
         let x = y - z;
-		result = x;
-	}
+        result = x;
+    }
     document.getElementById("output").innerHTML = "" + print[0] + print[1] + print[2] + "<br>" + print[3] + print[4] + print[5] + "<br><br>" + result;
 }
-function randomize(){
-    for(let i = 0; i < 6;i++){
+
+function randomize() {
+    for (let i = 0; i < 6; i++) {
         document.getElementById("i" + i).value = getRandomInt(10);
     }
 
@@ -195,7 +198,7 @@ function randomize(){
 
 function testIt(x) {
     let results = [];
-    for(let i = 0;i < x;i++){
+    for (let i = 0; i < x; i++) {
         randomize();
         go();
         let y = (output[0] * 100) + (output[1] * 10) + output[2];
@@ -207,6 +210,26 @@ function testIt(x) {
     }
     testResults = results;
     console.log(testResults);
+}
+
+function reallyTestIt() {
+    let results = [];
+    //loop through all the numbers
+    for (let i = 0; i < x; i++) {
+        let arr = count(6);
+        for (let i = 0; i < 6; i++) {
+            document.getElementById("i" + i).value = getRandomInt(10);
+        }
+        go();
+        let y = (output[0] * 100) + (output[1] * 10) + output[2];
+        let z = (output[3] * 100) + (output[4] * 10) + output[5];
+        let x = y - z;
+        x = x < 0 ? 1000 : x;
+        results.push(x);
+        //console.log(x);
+    }
+    console.log(results);
+    return results;
 }
 
 function average(arr) {
