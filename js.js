@@ -28,19 +28,61 @@
     }
     console.log(prob);
 }*/
+//Global Vars
 let output = [null,null,null,null,null,null];
 let testResults;
+let f = false;
+
+//User interaction functions
+function step(){
+	let guess = Array.of(...output);
+	let locked = [];
+    for(let i = 0;i < guess.length;i++){
+        if(guess[i] !== null){
+            locked.push(i);
+        }
+    }
+	if(document.getElementById("i" + (locked.length)).value !== ""){
+		runTheNumbers(6-locked.length);
+	}
+}
+function clearInput(){
+	for(let i = 0; i < 6;i++){
+        document.getElementById("i" + i).value = "";
+    }
+}
+function clearOutput(){
+	output = [null,null,null,null,null,null];
+	updateOutput();
+}
 function go() {
-    output = [null,null,null,null,null,null];
+    output = [null, null, null, null, null, null];
+    if (countLists.length === 0) {
+        createCountLists();
+
+    }
     for(let i = 6; i > 0;i--){
         runTheNumbers(i);
     }
 }
+function randAndGo(){
+	clearOutput();
+	randomize();
+	go();
+}
+function clearAll(){
+	clearInput();
+	clearOutput();
+}
+
+
+
+
 function runTheNumbers(spaces) {
     let y = Number(document.getElementById("i" + (6 - spaces)).value);
     let prob = findPosition(spaces,y);
     //console.log(prob);
-    output[prob.reduce((acc,cur,ind) => [cur < acc[0] ? cur : acc[0], cur < acc[0] ? ind : acc[1] ], [1000, -1])[1]] = y;
+    output[prob.reduce((acc,cur,ind) => [cur < acc[0] ? cur : acc[0], cur < acc[0] ? ind : acc[1] ], [1001, -1])[1]] = y;
     updateOutput();
     //console.log(output);
 }
@@ -82,38 +124,64 @@ function findPosition(spaces, y) {
             statList.push(x < 0 ? 1000 : x);
         }
         //Calculate the stats (mean)
-        prob.push(statList.reduce((a, b) => a + b, 0) / statList.length);
+        //prob.push(statList.reduce((a, b) => a + b, 0) / statList.length);
+        prob.push(ss.quantile(statList, 0.75));
     }
+	//console.log(prob);
     return prob;
 }
 
 function count(x) {
     x--;
-    let list = [];
-    for (let i = 0; i < 10; i++) {
-        if (x > 0) {
-            let l2 = count(x);
-            for (let j = 0; j < l2.length; j++){
-                l2[j].push(i);
+    if (countLists[x]) {
+        return countLists[x];
+
+    } else {
+        let list = [];
+        for (let i = 0; i < 10; i++) {
+            if (x > 0) {
+                let l2 = count(x);
+                for (let j = 0; j < l2.length; j++) {
+                    l2[j].push(i);
+                }
+                list.push(...l2);
+            } else {
+                list.push([i]);
             }
-            list.push(...l2);
-        } else {
-            list.push([i]);
         }
+        return list;
     }
-    return list;
+}
+
+let countLists = [];
+function createCountLists() {
+    for (let i = 0; i < 6; i++){
+
+        countLists.push(count(i));
+
+    }
+
 }
 
 function updateOutput() {
     let print = [];
+	let flag = false;
     for(let i =0;i<output.length;i++){
         if(output[i] === null){
-            print[i] = "_"
+            print[i] = "_";
+			flag = true;
         }else{
             print[i] = output[i];
         }
     }
-    document.getElementById("output").innerHTML = "" + print[0] + print[1] + print[2] + "<br>" + print[3] + print[4] + print[5];
+	let result = "";
+	if(!flag){
+		let y = (output[0] * 100) + (output[1] * 10) + output[2];
+        let z = (output[3] * 100) + (output[4] * 10) + output[5];
+        let x = y - z;
+		result = x;
+	}
+    document.getElementById("output").innerHTML = "" + print[0] + print[1] + print[2] + "<br>" + print[3] + print[4] + print[5] + "<br><br>" + result;
 }
 function randomize(){
     for(let i = 0; i < 6;i++){

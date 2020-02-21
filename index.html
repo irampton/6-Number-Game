@@ -1,8 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>6-Numbers Game</title>
+    <script src="simple-statistics.min.js"></script>
 </head>
 <body>
 <input type="number" id="i0">
@@ -12,7 +13,13 @@
 <input type="number" id="i4">
 <input type="number" id="i5">
 <br>
-<button onclick="go()">Go!</button>
+<button onClick="step()">Step</button>
+<button onclick="go()">Go</button>
+<button onClick="randomize()">Randomize</button>
+<button onClick="randAndGo()">New</button>
+<button onClick="clearInput()">Clear Input</button>
+<button onClick="clearOutput()">Clear Output</button>
+<button onClick="clearAll()">Clear All</button>
 <hr>
 <div id="output">
 </div>
