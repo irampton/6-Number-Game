@@ -128,7 +128,7 @@ function findPosition(spaces, y) {
         }
         //Calculate the stats (mean)
         //prob.push(statList.reduce((a, b) => a + b, 0) / statList.length);
-        prob.push(ss.quantile(statList, 0.75));
+        prob.push(ss.quantile(statList, 0.5));
     }
     //console.log(prob);
     return prob;
