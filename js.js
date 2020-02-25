@@ -80,6 +80,9 @@ function clearAll() {
     clearOutput();
 }
 
+function goTrials() {
+    testIt(Number(document.getElementById("trialNumber").value));
+}
 
 function runTheNumbers(spaces) {
     let y = Number(document.getElementById("i" + (6 - spaces)).value);
@@ -186,6 +189,10 @@ function updateOutput() {
     document.getElementById("output").innerHTML = "" + print[0] + print[1] + print[2] + "<br>" + print[3] + print[4] + print[5] + "<br><br>" + result;
 }
 
+function printArr(arr) {
+    document.getElementById("textOutput").value = arr.toString().replace(/,/g, "\n");
+}
+
 function randomize() {
     for (let i = 0; i < 6; i++) {
         document.getElementById("i" + i).value = getRandomInt(10);
@@ -209,7 +216,8 @@ function testIt(x) {
         //console.log(x);
     }
     testResults = results;
-    console.log(testResults);
+    printArr(results);
+    //console.log(testResults);
 }
 
 function reallyTestIt() {
