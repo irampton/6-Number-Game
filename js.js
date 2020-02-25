@@ -138,31 +138,30 @@ function findPosition(spaces, y) {
 }
 
 function count(x) {
-    x--;
-    if (countLists[x] !== undefined) {
-        return countLists[x];
-    } else {
-        let list = [];
+    let list = [];
+    if(countLists[x] !== undefined){
+        list = countLists[x];
+    }else {
         for (let i = 0; i < 10; i++) {
             if (x > 0) {
-                let l2 = count(x);
-                for (let j = 0; j < l2.length; j++) {
-                    l2[j].push(i);
+                let sublist = count(x - 1);
+                for (let j = 0; j < sublist.length; j++) {
+                    sublist[j].push(i);
                 }
-                list.push(...l2);
+                list.push(...sublist);
             } else {
-                list.push([i]);
+                list = [[]];
             }
         }
-        return list;
     }
+    return list;
 }
 
 let countLists = [];
 
 function createCountLists() {
     let templist = [];
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i <= 6; i++) {
         templist.push(count(i));
     }
     countLists = templist;
