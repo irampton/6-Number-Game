@@ -31,6 +31,7 @@
 //Global Vars
 let output = [null, null, null, null, null, null];
 let testResults;
+let round1Results = [null, null, null, null, null, null, null, null, null, null];
 let f = false;
 
 //User interaction functions
@@ -119,43 +120,53 @@ function findPosition(spaces, y) {
         }
     }
     //console.log(locked);
-    for (let i = 0; i < 6; i++) {
-        let doNotTouch = Array.of(...locked);
-        if (locked.includes(i)) {
-            prob.push(1001);
-            continue;
-        }
-        doNotTouch.push(i);
-        guess = Array.of(...output);
-        let statList = [];
-        guess[i] = y;
-        //do stuff
-        let it = countLists[spaces - 1];
-        for (let j = 0; j < it.length; j++) {
-            let index = 0;
-            for (let k = 0; k < it[j].length; k++) {
-                if (doNotTouch.includes(index)) {
+    if(spaces === 6 && round1Results[y] !== null) {
+        prob = round1Results[y];
+    }else{
+        for (let i = 0; i < 6; i++) {
+            let doNotTouch = Array.of(...locked);
+            if (locked.includes(i)) {
+                prob.push(1001);
+                continue;
+            }
+            doNotTouch.push(i);
+            guess = Array.of(...output);
+            let statList = [];
+            guess[i] = y;
+            //do stuff
+            let it = count(spaces - 1);
+            //console.log(it.length);
+            for (let j = 0; j < it.length; j++) {
+                let index = 0;
+                for (let k = 0; k < it[j].length; k++) {
+                    if (doNotTouch.includes(index)) {
+                        index++;
+                    }
+                    guess[index] = it[j][k];
                     index++;
                 }
-                guess[index] = it[j][k];
-                index++;
+                let y = (guess[0] * 100) + (guess[1] * 10) + guess[2];
+                let z = (guess[3] * 100) + (guess[4] * 10) + guess[5];
+                let x = y - z;
+                statList.push(x < 0 ? 1000 : x);
             }
-            let y = (guess[0] * 100) + (guess[1] * 10) + guess[2];
-            let z = (guess[3] * 100) + (guess[4] * 10) + guess[5];
-            let x = y - z;
-            statList.push(x < 0 ? 1000 : x);
+            //Calculate the stats (mean)
+            //prob.push(statList.reduce((a, b) => a + b, 0) / statList.length);
+            prob.push(ss.quantile(statList, 0.5));
         }
-        //Calculate the stats (mean)
-        //prob.push(statList.reduce((a, b) => a + b, 0) / statList.length);
-        prob.push(ss.quantile(statList, 0.5));
     }
     //console.log(prob);
+    if(spaces === 6 && round1Results[y] === null){
+        round1Results[y] = prob;
+    }
     return prob;
 }
 
 function count(x) {
     let list = [];
-    let y =0;
+    if (countLists[x] !== undefined) {
+        return countLists[x];
+    } else {
         for (let i = 0; i < 10; i++) {
             if (x > 0) {
                 let sublist = count(x - 1);
@@ -167,6 +178,7 @@ function count(x) {
                 list = [[]];
             }
         }
+    }
     return list;
 }
 
@@ -213,6 +225,7 @@ function randomize() {
 }
 
 function testIt(x) {
+    let t1 = +new Date();
     let results = [];
     for (let i = 0; i < x; i++) {
         randomize();
@@ -226,6 +239,8 @@ function testIt(x) {
     }
     testResults = results;
     printArr(results);
+    let t2 = +new Date();
+    console.log(t2-t1);
     //console.log(testResults);
 }
 
