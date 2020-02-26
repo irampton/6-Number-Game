@@ -84,6 +84,22 @@ function goTrials() {
     testIt(Number(document.getElementById("trialNumber").value));
 }
 
+function toggleAdvanced() {
+    // Get the checkbox
+    var checkBox = document.getElementById("advancedCheck");
+    // Get the output text
+    var text = document.getElementById("advanced");
+
+    // If the checkbox is checked, display the output text
+    if (checkBox.checked == true){
+        text.style.display = "block";
+    } else {
+        text.style.display = "none";
+    }
+}
+toggleAdvanced();
+
+//Logic
 function runTheNumbers(spaces) {
     let y = Number(document.getElementById("i" + (6 - spaces)).value);
     let prob = findPosition(spaces, y);
@@ -161,7 +177,7 @@ let countLists = [];
 
 function createCountLists() {
     let templist = [];
-    for (let i = 0; i <= 6; i++) {
+    for (let i = 0; i <= 5; i++) {
         templist.push(count(i));
     }
     countLists = templist;
@@ -242,3 +258,5 @@ function reallyTestIt() {
 function average(arr) {
     return arr.reduce((a, b) => a + b, 0) / arr.length
 }
+
+createCountLists();
