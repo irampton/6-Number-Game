@@ -30,7 +30,6 @@
 }*/
 //Global Vars
 let output = [null, null, null, null, null, null];
-let testResults;
 let round1Results = [null, null, null, null, null, null, null, null, null, null];
 let f = false;
 
@@ -62,7 +61,7 @@ function clearOutput() {
 function go() {
     output = [null, null, null, null, null, null];
     if (countLists.length === 0) {
-        createCountLists();
+        createCountLists(5);
 
     }
     for (let i = 6; i > 0; i--) {
@@ -184,14 +183,17 @@ function count(x) {
 
 let countLists = [];
 
-function createCountLists() {
+function createCountLists(x) {
+    countLists = [];
     let templist = [];
-    for (let i = 0; i <= 5; i++) {
+    for (let i = 0; i <= x; i++) {
         templist.push(count(i));
     }
     countLists = templist;
 }
+createCountLists(5);
 
+//Testing and Output
 function updateOutput() {
     let print = [];
     let flag = false;
@@ -237,35 +239,36 @@ function testIt(x) {
         results.push(x);
         //console.log(x);
     }
-    testResults = results;
     printArr(results);
     let t2 = +new Date();
     console.log(t2-t1);
     //console.log(testResults);
 }
 
+let workerResults = [];
 function reallyTestIt() {
-    let results = [];
-    //loop through all the numbers
-    for (let i = 0; i < x; i++) {
-        let arr = count(6);
-        for (let i = 0; i < 6; i++) {
-            document.getElementById("i" + i).value = getRandomInt(10);
+    if(confirm("Do you really want to do this?\nThis could take over 20 minuets on a *fast* computer")) {
+        //createCountLists(6);
+        let arr = countLists[5];
+        for (let j = 0; j < arr.length; j++) {
+            arr[j].unshift(0);
         }
-        go();
-        let y = (output[0] * 100) + (output[1] * 10) + output[2];
-        let z = (output[3] * 100) + (output[4] * 10) + output[5];
-        let x = y - z;
-        x = x < 0 ? 1000 : x;
-        results.push(x);
-        //console.log(x);
+        for (let i = 0; i < 10; i++) {
+            for (let j = 0; j < arr.length; j++) {
+                arr[j][0] = i;
+            }
+            let worker = new Worker('worker.js');
+            worker.addEventListener('message', e => {
+                workerResults.push(...e.data);
+                console.log(e.data);
+            }, false);
+            worker.postMessage(arr);
+        }
+        //printArr(workerResults);
+        //console.log(results);
     }
-    console.log(results);
-    return results;
 }
 
 function average(arr) {
     return arr.reduce((a, b) => a + b, 0) / arr.length
 }
-
-createCountLists();
