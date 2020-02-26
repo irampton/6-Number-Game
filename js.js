@@ -130,7 +130,7 @@ function findPosition(spaces, y) {
         let statList = [];
         guess[i] = y;
         //do stuff
-        let it = count(spaces - 1);
+        let it = countLists[spaces - 1];
         for (let j = 0; j < it.length; j++) {
             let index = 0;
             for (let k = 0; k < it[j].length; k++) {
@@ -155,9 +155,7 @@ function findPosition(spaces, y) {
 
 function count(x) {
     let list = [];
-    if(countLists[x] !== undefined){
-        list = countLists[x];
-    }else {
+    let y =0;
         for (let i = 0; i < 10; i++) {
             if (x > 0) {
                 let sublist = count(x - 1);
@@ -169,7 +167,6 @@ function count(x) {
                 list = [[]];
             }
         }
-    }
     return list;
 }
 
@@ -195,12 +192,9 @@ function updateOutput() {
         }
     }
     let result = "";
-    if (!flag) {
         let y = (output[0] * 100) + (output[1] * 10) + output[2];
         let z = (output[3] * 100) + (output[4] * 10) + output[5];
-        let x = y - z;
-        result = x;
-    }
+        result = y - z;
     document.getElementById("output").innerHTML = "" + print[0] + print[1] + print[2] + "<br>" + print[3] + print[4] + print[5] + "<br><br>" + result;
 }
 
