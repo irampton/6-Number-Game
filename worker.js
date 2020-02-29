@@ -2,6 +2,9 @@ importScripts("simple-statistics.min.js");
 
 self.addEventListener('message', function(e) {
     let arr = e.data;
+    if(arr.round1List){
+     round1Results = arr.round1List;
+    }
     let results = [];
     for (let i = 0; i < arr.length; i++) {
         input = arr[i];
@@ -75,9 +78,12 @@ function findPosition(spaces, y) {
                 let x = y - z;
                 statList.push(x < 0 ? 1000 : x);
             }
-            //Calculate the stats (mean)
-            //prob.push(statList.reduce((a, b) => a + b, 0) / statList.length);
-            prob.push(ss.quantile(statList, 0.5));
+            //Calculate the stats
+            if(spaces <= 3){
+                prob.push(statList.reduce((a, b) => a + b, 0) / statList.length);
+            }else {
+                prob.push(ss.quantile(statList, 0.5));
+            }
         }
     }
     //console.log(prob);

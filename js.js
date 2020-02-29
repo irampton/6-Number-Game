@@ -31,7 +31,7 @@
 //Global Vars
 let output = [null, null, null, null, null, null];
 let round1Results = [null, null, null, null, null, null, null, null, null, null];
-let f = false;
+let countLists = [];
 
 //User interaction functions
 function step() {
@@ -82,6 +82,10 @@ function clearAll() {
 
 function goTrials() {
     testIt(Number(document.getElementById("trialNumber").value));
+}
+
+function goTrialsThreads() {
+    testItWorkers(Number(document.getElementById("trialNumber").value), Number(document.getElementById("threads").value));
 }
 
 function toggleAdvanced() {
@@ -149,9 +153,12 @@ function findPosition(spaces, y) {
                 let x = y - z;
                 statList.push(x < 0 ? 1000 : x);
             }
-            //Calculate the stats (mean)
-            //prob.push(statList.reduce((a, b) => a + b, 0) / statList.length);
-            prob.push(ss.quantile(statList, 0.5));
+            //Calculate the stats
+            if(spaces <= 3){
+                prob.push(statList.reduce((a, b) => a + b, 0) / statList.length);
+            }else {
+                prob.push(ss.quantile(statList, 0.5));
+            }
         }
     }
     //console.log(prob);
@@ -181,8 +188,6 @@ function count(x) {
     return list;
 }
 
-let countLists = [];
-
 function createCountLists(x) {
     countLists = [];
     let templist = [];
@@ -192,6 +197,12 @@ function createCountLists(x) {
     countLists = templist;
 }
 createCountLists(5);
+
+function createRound1List() {
+    for(let i  = 0;i < 10;i++){
+        findPosition(6,i);
+    }
+}
 
 //Testing and Output
 function updateOutput() {
@@ -220,10 +231,10 @@ function randomize() {
     for (let i = 0; i < 6; i++) {
         document.getElementById("i" + i).value = getRandomInt(10);
     }
+}
 
-    function getRandomInt(max) {
-        return Math.floor(Math.random() * Math.floor(max));
-    }
+function getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
 }
 
 function testIt(x) {
@@ -245,7 +256,39 @@ function testIt(x) {
     //console.log(testResults);
 }
 
+function testItWorkers(x, numberOfThreads) {
+    let workersReported = 0;
+    let results = [];
+    let t1 = +new Date();
+    createRound1List();
+    for(let i = 0; i < numberOfThreads;i++){
+        let len = i !== (numberOfThreads - 1) ? Math.floor(x / numberOfThreads) : Math.floor(x / numberOfThreads) + x % numberOfThreads;
+        let randList = [];
+        for(let j = 0; j < len;j++){
+            let tempList = [];
+            for(let k = 0; k < 6;k++){
+                tempList.push(getRandomInt(10));
+            }
+            randList.push(tempList);
+        }
+        let worker = new Worker('worker.js');
+        worker.addEventListener('message', e => {
+            //console.log(e.data);
+            results.push(...e.data);
+            workersReported++;
+            if(workersReported === numberOfThreads){
+                printArr(results);
+                let t2 = +new Date();
+                console.log(t2-t1);
+            }
+        }, false);
+        randList.round1List = round1Results;
+        worker.postMessage(randList);
+    }
+}
+
 let workerResults = [];
+
 function reallyTestIt() {
     if(confirm("Do you really want to do this?\nThis could take over 20 minuets on a *fast* computer")) {
         //createCountLists(6);
