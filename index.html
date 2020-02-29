@@ -30,10 +30,11 @@ Advanced: <input type="checkbox" id="advancedCheck" onclick="toggleAdvanced()">
 </div>
 <div id="advanced" style="display: none;">
     <hr>
+    <button onclick="createRound1List()">Round 1 Pre-Calc</button>
     # of trials
     <input id="trialNumber" value="10">
     <button onclick="goTrials()">Run Trials</button>
-    <input id="threads" value="4">
+    <input id="threads" value="8">
     <button onclick="goTrialsThreads()">Run Trials with Threads</button>
     <br>
     <textarea id="textOutput"></textarea>

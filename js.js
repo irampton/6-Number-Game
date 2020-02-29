@@ -154,11 +154,7 @@ function findPosition(spaces, y) {
                 statList.push(x < 0 ? 1000 : x);
             }
             //Calculate the stats
-            if(spaces <= 3){
-                prob.push(statList.reduce((a, b) => a + b, 0) / statList.length);
-            }else {
-                prob.push(ss.quantile(statList, 0.5));
-            }
+            prob.push(ss.quantile(statList, 0.5));
         }
     }
     //console.log(prob);
